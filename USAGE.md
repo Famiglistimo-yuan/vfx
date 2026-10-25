@@ -2,7 +2,7 @@
 
 This guide explains how to build a JavaFX desktop application with [vfx](https://github.com/wkgcass/vfx) (`io.vproxy:vfx`, version 1.4.0 at the time of writing): how to set up the window skeleton, navigate between scenes, customize themes, and use the most common components.
 
-The fastest way to get a feel for the library is to run `./gradlew runIntro` in this repository — an interactive demo covering every core component. Its source lives in `src/test/java/io/vproxy/vfx/intro/` (one file per scene) and is the best reference for copy-pasting.
+This guide complements the README: dependency coordinates, the intro demo, and everything else the README already explains are not repeated here.
 
 ---
 
@@ -22,33 +22,13 @@ It fits "single window + multiple pages" desktop tools (admin consoles, dashboar
 
 ---
 
-## 2. Add the dependency
+## 2. Dependency notes
 
-Gradle:
-
-```groovy
-implementation 'io.vproxy:vfx:1.4.0'
-```
-
-Maven:
-
-```xml
-<dependency>
-  <groupId>io.vproxy</groupId>
-  <artifactId>vfx</artifactId>
-  <version>1.4.0</version>
-</dependency>
-```
-
-Things to know:
+The dependency coordinates and the Kotlin/vjson note are in the README; this section covers what the README does not — what to know after adding the dependency:
 
 1. **Declare your own JavaFX modules.** vfx does not pull openjfx into your build — bring the JavaFX modules you need yourself (e.g. via the `org.openjfx.javafxplugin` Gradle plugin or `org.openjfx` Maven artifacts). `javafx-controls` covers the basics; vfx also uses `javafx.embed.swing` internally for image processing, so add `javafx-swing` as well (same OpenJFX version as the rest of your modules). `javafx-media` is only needed for the audio/video features.
 
 2. **Transitive dependencies.** vfx brings in `com.github.kwhat:jnativehook` (global key/mouse hooks, used by `GlobalScreenUtils`) and `io.vproxy:commons` as `api` dependencies. If you build a fat jar, jnativehook ships native libraries for all platforms, which increases the jar size.
-
-3. **Kotlin users** may need to exclude `kotlin-stdlib-lite`, see [vjson](https://github.com/wkgcass/vjson) for details.
-
-4. **Upgrading**: the README states that incompatible API changes may happen between releases. Pin the version and review the code before upgrading.
 
 ---
 
@@ -424,14 +404,4 @@ t.start();
 4. **Clean up on window close**: `TaskManager.terminate()` + `GlobalScreenUtils.unregister()`.
 5. **No theme hot-swap**: switching themes means persisting the preference and restarting; leave the user-agent stylesheet at Modena (§5).
 6. **Dialogs cannot see page stylesheets** — attach per dialog; popup layers inherit automatically.
-7. **Most paddings and metrics are static fields** and not configurable; deep customization means subclassing (e.g. a custom `Theme`) or patching the source.
-8. **Pin the version**: incompatible API changes may happen between releases; review before upgrading.
-9. **Scene content is not auto-laid-out**: vfx scenes are absolutely laid out plus `FXUtils.observe*` helpers — a mindset shift if you come from layout panes.
-
----
-
-## 11. Further reading
-
-- **Interactive demo**: `./gradlew runIntro`; sources in `src/test/java/io/vproxy/vfx/intro/` (per topic: a = intro, b = demo, c = structure — copy away).
-- **Module overview**: `src/main/java/io/vproxy/vfx/module-info.java` — the exports list is the capability list.
-- **Real-world projects using vfx**: `vproxy-ui`, `xbox-relay`, `hotta-pc-assistant` (see the README).
+7. **Scene content is not auto-laid-out**: vfx scenes are absolutely laid out plus `FXUtils.observe*` helpers — a mindset shift if you come from layout panes.

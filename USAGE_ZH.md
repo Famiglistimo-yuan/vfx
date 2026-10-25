@@ -2,7 +2,7 @@
 
 本文介绍如何使用 [vfx](https://github.com/wkgcass/vfx)（`io.vproxy:vfx`，写作时版本 1.4.0）搭建 JavaFX 桌面应用：窗口骨架、场景导航、主题定制以及常用组件。
 
-最快了解本库的方式是在本仓库执行 `./gradlew runIntro`——一个覆盖全部核心组件的交互式演示；演示源码在 `src/test/java/io/vproxy/vfx/intro/`（每个场景一个文件），是最好的照抄参考。
+本文是 README 的补充：依赖坐标、intro 演示等 README 已说明的内容不再重复。
 
 ---
 
@@ -22,33 +22,13 @@ vfx 是一个 JavaFX UI 框架/组件库。它不给原生控件换皮肤，而�
 
 ---
 
-## 2. 引入依赖
+## 2. 依赖注意事项
 
-Gradle：
-
-```groovy
-implementation 'io.vproxy:vfx:1.4.0'
-```
-
-Maven：
-
-```xml
-<dependency>
-  <groupId>io.vproxy</groupId>
-  <artifactId>vfx</artifactId>
-  <version>1.4.0</version>
-</dependency>
-```
-
-注意事项：
+依赖坐标与 Kotlin/vjson 的说明见 README；本节只讲 README 没覆盖的、引入依赖之后需要知道的事：
 
 1. **JavaFX 模块要自己声明**。vfx 不会替你引入 openjfx——所需的 JavaFX 模块请自行声明（如 Gradle 的 `org.openjfx.javafxplugin` 插件或 Maven 的 `org.openjfx` 构件）。`javafx-controls` 覆盖基础；vfx 内部图片处理用到 `javafx.embed.swing`，需另补 `javafx-swing`（与既有 JavaFX 模块同版本）。`javafx-media` 仅音视频功能需要。
 
 2. **传递依赖**：vfx 以 `api` 依赖传递引入 `com.github.kwhat:jnativehook`（全局键鼠监听，`GlobalScreenUtils` 使用）和 `io.vproxy:commons`。打 fat jar 时 jnativehook 会带上各平台原生库，体积会增大。
-
-3. **Kotlin 用户**可能需按 [vjson](https://github.com/wkgcass/vjson) 说明排除 `kotlin-stdlib-lite`。
-
-4. **升级要谨慎**：README 声明版本间可能有不兼容 API 变更，锁版本、升级前逐条核对。
 
 ---
 
@@ -423,14 +403,4 @@ t.start();
 4. **窗口关闭记得清理**：`TaskManager.terminate()` + `GlobalScreenUtils.unregister()`。
 5. **主题无热切换**：切换 = 落盘偏好 + 重启；UA stylesheet 保持 Modena 不动（§5）。
 6. **Dialog 弹窗拿不到页面样式表**，要单独挂；popup 浮层自动继承，不用管。
-7. **多数 UI 参数（内边距等）是静态字段、不可配置**，深度定制需继承覆写（如自定义 `Theme`）或改源码。
-8. **锁版本**：版本间可能有不兼容 API 变更，升级前逐条核对。
-9. **场景内容不会自动布局**：绝对布局 + `FXUtils.observe*` 工具，从 LayoutPane 思维切换过来需要适应。
-
----
-
-## 11. 延伸资源
-
-- **交互式演示**：本仓库 `./gradlew runIntro`；源码 `src/test/java/io/vproxy/vfx/intro/`（每章 a=介绍 / b=演示 / c=结构，照着抄即可）。
-- **模块总览**：`src/main/java/io/vproxy/vfx/module-info.java`，exports 列表即能力清单。
-- **使用 vfx 的真实项目**：`vproxy-ui`、`xbox-relay`、`hotta-pc-assistant`（见 README）。
+7. **场景内容不会自动布局**：绝对布局 + `FXUtils.observe*` 工具，从 LayoutPane 思维切换过来需要适应。
